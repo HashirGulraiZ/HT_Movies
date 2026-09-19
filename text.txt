@@ -1,0 +1,411 @@
+You are the senior full-stack engineer responsible for building the HTMovie project in this VS Code workspace.
+
+## IMPORTANT — READ THE PROJECT SPECIFICATION FIRST
+
+Before writing or modifying code, inspect the entire workspace.
+
+You MUST locate and read:
+
+1. `Pasted text.txt` — the primary HTMovie project specification.
+2. `database/schema.sql` — the database source of truth.
+3. `database/seed.sql` if it exists.
+4. `package.json`
+5. `tsconfig.json`
+6. `eslint.config.mjs`
+7. `postcss.config.mjs`
+8. `src/app/globals.css`
+9. The existing `src/` directory and all relevant existing implementation.
+
+Treat `Pasted text.txt` as the primary source of truth for the application's required features, routes, architecture, UI, and functionality.
+
+Treat `database/schema.sql` as the source of truth for the database structure.
+
+Do not replace, simplify, or reinterpret the specification without a concrete technical reason.
+
+---
+
+# TECHNOLOGY REQUIREMENTS
+
+The project uses:
+
+* Next.js 15
+* React 19
+* TypeScript
+* App Router
+* Tailwind CSS 4
+* MySQL
+* mysql2
+* Zod
+* bcryptjs
+* jsonwebtoken
+* nodemailer
+* lucide-react
+* clsx
+* tailwind-merge
+* ESLint 9
+
+Do NOT downgrade to Tailwind CSS 3.
+
+Use Tailwind CSS 4 with:
+
+`postcss.config.mjs`
+
+and:
+
+```css
+@import "tailwindcss";
+```
+
+inside:
+
+`src/app/globals.css`
+
+Do not create an old Tailwind configuration unless a real dependency requires it.
+
+---
+
+# YOUR JOB
+
+Do not merely explain how to build the application.
+
+Actually build it in the workspace.
+
+Create files, edit files, create directories, implement components, implement APIs, implement database access, and fix errors.
+
+Use the architecture and requirements from `Pasted text.txt`.
+
+Use the existing database schema rather than inventing a different schema.
+
+---
+
+# IMPLEMENTATION RULES
+
+Before making changes:
+
+1. Inspect the existing repository.
+2. Understand what has already been implemented.
+3. Reuse working code.
+4. Do not create duplicate components.
+5. Do not create duplicate routes.
+6. Do not overwrite working implementations unnecessarily.
+7. Follow the project specification exactly.
+8. Keep the project runnable after each major stage.
+
+Use:
+
+* Server Components by default.
+* Client Components only when interactivity requires them.
+* Parameterized MySQL queries.
+* Zod for external/user input validation.
+* Proper authentication and authorization.
+* Reusable components.
+* Reusable database functions.
+* Proper TypeScript types.
+
+Avoid `any` unless genuinely unavoidable.
+
+Never expose secrets to the browser.
+
+---
+
+# DESIGN
+
+Build HTMovie as a polished modern streaming platform.
+
+The visual direction should be:
+
+* dark
+* cinematic
+* premium
+* responsive
+* clean
+* modern
+
+Use:
+
+* near-black backgrounds
+* crimson/red brand accents
+* cinematic hero sections
+* movie/TV poster cards
+* horizontal media rows
+* subtle borders
+* subtle shadows
+* smooth hover states
+* responsive mobile navigation
+* accessible controls
+
+Do not make the UI look like a generic admin dashboard.
+
+The public-facing site should feel like a real streaming service.
+
+---
+
+# IMPLEMENTATION ORDER
+
+Follow this general order while respecting the actual specification:
+
+## Phase 1 — Foundation
+
+* inspect repository
+* verify package configuration
+* Tailwind 4
+* global CSS
+* ESLint
+* TypeScript
+* root layout
+* metadata
+* reusable UI primitives
+
+## Phase 2 — Public UI
+
+* Header
+* Footer
+* navigation
+* mobile navigation
+* Hero
+* Media cards
+* Media rows
+* Homepage
+
+## Phase 3 — Public Media
+
+* Movies
+* Movie details
+* TV Shows
+* TV details
+* Seasons
+* Episodes
+* Genres
+* Languages
+* Search
+* Live TV
+* Games
+* About
+
+## Phase 4 — Database
+
+* MySQL connection pool
+* database layer
+* queries
+* types
+* API response helpers
+* validation
+* seed data
+
+## Phase 5 — Authentication
+
+* registration
+* login
+* logout
+* password hashing
+* sessions/JWT according to project architecture
+* middleware
+* authorization
+* forgot/reset password
+
+## Phase 6 — Account Features
+
+* profile
+* settings
+* My List
+* watch history
+* continue watching
+
+## Phase 7 — Player
+
+* movie player
+* episode player
+* progress tracking
+* watch history integration
+
+## Phase 8 — Admin
+
+* dashboard
+* sidebar
+* tables
+* CRUD
+* movies
+* TV shows
+* seasons
+* episodes
+* genres
+* languages
+* people
+* live TV
+* games
+* users
+* media
+* settings
+
+## Phase 9 — Security & Performance
+
+* authorization audit
+* input validation
+* upload validation
+* SQL security
+* image optimization
+* query optimization
+* error handling
+* loading states
+* empty states
+
+## Phase 10 — Final QA
+
+Run:
+
+```bash
+npm run lint
+npm run build
+```
+
+Fix every error you can.
+
+Then inspect the major routes and user flows.
+
+---
+
+# IMPORTANT FUNCTIONALITY RULE
+
+Do not create fake UI.
+
+If a button exists, it should perform its intended action.
+
+Examples:
+
+* Login must actually authenticate.
+* Register must create an account.
+* My List must actually save/remove content.
+* Search must actually search.
+* Filters must actually filter.
+* Watch history must actually save progress.
+* Admin CRUD must actually modify the database.
+* Video player must use configured video URLs.
+* Live TV must use configured stream URLs.
+
+If an external service is required, isolate the integration and document the required environment variables.
+
+---
+
+# DATABASE
+
+Use `database/schema.sql` as the authoritative schema.
+
+Do not casually modify the database schema.
+
+Use `mysql2` connection pooling.
+
+Keep SQL/database logic inside:
+
+`src/lib/db/`
+
+Do not put SQL directly inside React components.
+
+Use parameterized queries.
+
+Respect all existing foreign keys, indexes, unique constraints, and relationships.
+
+---
+
+# SECURITY
+
+Implement proper:
+
+* password hashing
+* authentication
+* authorization
+* secure cookies/session handling
+* server-side role checks
+* ownership checks
+* Zod validation
+* upload validation
+* safe SQL
+* safe error messages
+
+Admin authorization must be enforced server-side.
+
+Do not rely on hiding admin UI links.
+
+Never expose:
+
+* database passwords
+* authentication secrets
+* SMTP passwords
+* private environment variables
+
+to client-side code.
+
+---
+
+# RESPONSIVENESS
+
+The UI must work properly on:
+
+* mobile
+* tablet
+* laptop
+* desktop
+* large screens
+
+Pay particular attention to:
+
+* navigation
+* hero
+* poster grids
+* horizontal media rows
+* video player
+* forms
+* admin tables
+
+---
+
+# CODE QUALITY
+
+Prefer:
+
+* reusable components
+* clear naming
+* small focused functions
+* strict TypeScript
+* consistent API responses
+* centralized utilities
+* centralized database access
+* centralized authentication logic
+
+Do not create unnecessary abstractions.
+
+Do not over-engineer.
+
+---
+
+# VALIDATION
+
+After major implementation stages, run the appropriate checks.
+
+At minimum, before considering the project finished:
+
+```bash
+npm run lint
+npm run build
+```
+
+Fix errors rather than ignoring them.
+
+If commands fail because dependencies/environment/database configuration are missing, identify the exact cause and continue implementing everything that can be implemented locally.
+
+---
+
+# FINAL REPORT
+
+When you finish a major phase, report:
+
+PHASE:
+WHAT WAS IMPLEMENTED:
+FILES CREATED:
+FILES MODIFIED:
+VALIDATION:
+REMAINING WORK:
+
+Do not stop after creating a plan.
+
+Start now by inspecting the workspace and reading `Pasted text.txt` and `database/schema.sql`.
+Then begin implementing the project from its current state.
