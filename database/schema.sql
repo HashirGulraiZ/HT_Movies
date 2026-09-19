@@ -6,6 +6,7 @@ USE htmovie_db;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS site_settings;
 DROP TABLE IF EXISTS watch_history;
 DROP TABLE IF EXISTS my_lists;
 DROP TABLE IF EXISTS movie_cast;
@@ -26,6 +27,23 @@ DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS users;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE site_settings (
+    setting_key VARCHAR(100) PRIMARY KEY,
+    setting_value TEXT NOT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO site_settings (setting_key, setting_value) VALUES
+    ('site_name', 'HTMovie'),
+    ('site_description', 'A cinematic home for movies, series, live television, and games.'),
+    ('hero_title', 'Stories worth staying up for.'),
+    ('hero_description', 'Find a sharper kind of streaming: celebrated films, addictive series, live channels, and a little room for the unexpected.'),
+    ('hero_image_url', ''),
+    ('hero_cta_label', 'Start watching'),
+    ('hero_cta_url', '/movies'),
+    ('featured_section_title', 'Keep exploring'),
+    ('featured_section_description', 'Curated for tonight');
 
 CREATE TABLE users (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

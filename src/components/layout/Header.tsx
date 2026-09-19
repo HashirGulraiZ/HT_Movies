@@ -1,19 +1,24 @@
 import Link from "next/link";
 import { Search, UserRound } from "lucide-react";
+import { getSiteSettings } from "@/lib/db/queries/siteSettings";
 
-const navigation = [
-	{ href: "/movies", label: "Movies" },
-	{ href: "/tv-shows", label: "Series" },
-	{ href: "/live-tv", label: "Live TV" },
-	{ href: "/games", label: "Games" },
-];
-
-export function Header() {
+export async function Header() {
+	const settings = await getSiteSettings();
+	const defaults = [
+		{ href: "/movies", label: "Movies" },
+		{ href: "/tv-shows", label: "Series" },
+		{ href: "/live-tv", label: "Live TV" },
+		{ href: "/games", label: "Games" },
+	];
+	const navigation = settings.header_navigation.split(",").map((label) => {
+		const item = defaults.find((entry) => entry.label.toLowerCase() === label.trim().toLowerCase());
+		return item ?? { href: `/${label.trim().toLowerCase().replace(/\s+/g, "-")}`, label: label.trim() };
+	}).filter((item) => item.label);
 	return (
 		<header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-background/85 backdrop-blur-xl">
 			<div className="container-page flex h-16 items-center justify-between gap-6">
 				<Link className="shrink-0 text-xl font-bold tracking-tight text-white" href="/">
-					HT<span className="text-brand-500">Movie</span>
+					{settings.header_logo_url ? <img className="max-h-9 w-auto" src={settings.header_logo_url} alt={settings.site_name} /> : <>{settings.site_name}</>}
 				</Link>
 				<nav className="hidden items-center gap-7 text-sm text-foreground-muted md:flex" aria-label="Primary navigation">
 					{navigation.map((item) => (
