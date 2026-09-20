@@ -12,7 +12,12 @@ const pageSchema = z.object({
 
 export async function GET() {
 	if (!(await requireAdmin())) return NextResponse.json({ error: "Admin authorization required" }, { status: 403 });
-	return NextResponse.json({ data: await getPages() });
+	try {
+		return NextResponse.json({ data: await getPages() });
+	} catch (error) {
+		console.error("Page listing failed", error);
+		return NextResponse.json({ error: "Unable to load pages" }, { status: 500 });
+	}
 }
 
 export async function POST(request: Request) {

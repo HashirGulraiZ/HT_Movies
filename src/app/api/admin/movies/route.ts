@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createMovie, getAdminMovies } from "@/lib/db/queries/movies";
+import { createMovie, getAdminMovies, normalizeMovieSlug } from "@/lib/db/queries/movies";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
 
 const movieSchema = z.object({
 	title: z.string().trim().min(1).max(255),
-	slug: z.string().trim().min(1).max(280),
+	slug: z.string().trim().min(1).max(280).transform(normalizeMovieSlug),
 	description: z.string().nullable().optional(),
 	poster_url: z.string().url().or(z.literal("")).nullable().optional(),
 	backdrop_url: z.string().url().or(z.literal("")).nullable().optional(),
@@ -15,6 +15,9 @@ const movieSchema = z.object({
 	release_year: z.coerce.number().int().min(1888).max(2200).nullable().optional(),
 	rating: z.coerce.number().min(0).max(10).nullable().optional(),
 	age_rating: z.string().max(20).nullable().optional(),
+	director: z.string().trim().max(255).nullable().optional(),
+	cast_members: z.string().trim().max(2000).nullable().optional(),
+	quality: z.string().trim().max(50).nullable().optional(),
 	status: z.enum(["draft", "published", "archived"]).default("draft"),
 	featured: z.coerce.boolean().default(false),
 });
@@ -45,6 +48,9 @@ export async function POST(request: Request) {
 			release_year: parsed.data.release_year ?? null,
 			rating: parsed.data.rating ?? null,
 			age_rating: parsed.data.age_rating ?? null,
+			director: parsed.data.director || null,
+			cast_members: parsed.data.cast_members || null,
+			quality: parsed.data.quality || null,
 		});
 		return NextResponse.json({ id }, { status: 201 });
 	} catch (error) {

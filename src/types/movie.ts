@@ -11,7 +11,12 @@ export type Movie = {
 	release_year: number | null;
 	rating: number | null;
 	age_rating: string | null;
+	director: string | null;
+	cast_members: string | null;
+	quality: string | null;
 	status: "draft" | "published" | "archived";
 	featured: number;
 	views: number;
+	likes: number;
 };
+

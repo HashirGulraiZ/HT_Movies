@@ -15,6 +15,8 @@ export type SiteSettings = {
 	header_navigation: string;
 	footer_text: string;
 	footer_links: string;
+	intro_animation_enabled: string;
+	intro_animation_video_url: string;
 };
 
 export const defaultSiteSettings: SiteSettings = {
@@ -32,6 +34,8 @@ export const defaultSiteSettings: SiteSettings = {
 	header_navigation: "Movies,TV Shows,Genres,Live TV,Games",
 	footer_text: "Stories worth staying up for.",
 	footer_links: "About|/about",
+	intro_animation_enabled: "0",
+	intro_animation_video_url: "",
 };
 
 async function ensureSiteSettingsTable() {

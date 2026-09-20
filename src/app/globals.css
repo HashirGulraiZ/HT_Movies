@@ -408,6 +408,152 @@ button:disabled {
   box-shadow: var(--shadow-card);
 }
 
+.editor-icon-button {
+	display: inline-flex;
+	height: 2rem;
+	width: 2rem;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.5rem;
+	border: 1px solid rgb(255 255 255 / 0.1);
+	color: rgb(212 212 216);
+	transition: background-color 150ms ease, color 150ms ease;
+}
+
+.editor-icon-button:hover:not(:disabled) {
+	background: rgb(255 255 255 / 0.08);
+	color: white;
+}
+
+.editor-icon-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.3;
+}
+
+.content-section {
+	width: 100%;
+}
+
+.admin-studio-header {
+	position: sticky;
+	top: 0;
+	z-index: 40;
+	border-bottom: 1px solid rgb(255 255 255 / 0.08);
+	background: rgb(12 10 14 / 0.94);
+	box-shadow: 0 12px 35px rgb(0 0 0 / 0.22);
+	backdrop-filter: blur(18px);
+}
+
+.admin-header-action {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	border: 1px solid rgb(255 255 255 / 0.12);
+	border-radius: 0.55rem;
+	padding: 0.55rem 0.7rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-foreground-muted);
+	transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+
+.admin-header-action:hover {
+	border-color: rgb(251 113 133 / 0.55);
+	background: rgb(225 29 72 / 0.12);
+	color: white;
+}
+
+.admin-shell {
+	background: radial-gradient(circle at 80% 0%, rgb(190 24 93 / 0.08), transparent 28rem);
+}
+
+.admin-route .public-header,
+.admin-route .public-footer,
+.admin-route .public-animation {
+	display: none;
+}
+
+.admin-route .min-h-screen {
+	padding-top: 0;
+}
+
+.intro-animation {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+	background: #050507;
+	opacity: 1;
+	transition: opacity 650ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.intro-animation--leaving {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.intro-animation video {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	object-position: center;
+	background: #050507;
+	opacity: 0.9;
+}
+
+.intro-animation__veil {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(circle, transparent 10%, rgb(5 5 7 / 0.35) 72%, #050507 100%), linear-gradient(180deg, rgb(5 5 7 / 0.25), rgb(5 5 7 / 0.58));
+	pointer-events: none;
+}
+
+.intro-animation__brand {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+	color: white;
+	font-size: clamp(1.4rem, 3vw, 2.25rem);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	text-shadow: 0 0 30px rgb(244 63 94 / 0.6);
+}
+
+.intro-animation__mark {
+	display: grid;
+	height: 2.5rem;
+	width: 2.5rem;
+	place-items: center;
+	border-radius: 0.75rem;
+	background: var(--color-brand-600);
+	font-size: 0.85rem;
+	letter-spacing: 0;
+}
+
+.intro-animation__skip {
+	position: absolute;
+	right: 1.25rem;
+	bottom: 1.25rem;
+	border: 1px solid rgb(255 255 255 / 0.22);
+	border-radius: 999px;
+	padding: 0.55rem 0.9rem;
+	color: rgb(255 255 255 / 0.75);
+	font-size: 0.75rem;
+	background: rgb(0 0 0 / 0.28);
+	backdrop-filter: blur(8px);
+}
+
+.intro-animation__skip:hover {
+	color: white;
+	background: rgb(255 255 255 / 0.12);
+}
+
 /*
 |--------------------------------------------------------------------------
 | Text Utilities
@@ -459,4 +605,75 @@ button:disabled {
 
 .font-serif {
   font-family: Georgia, "Times New Roman", serif;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Homepage Sections
+|--------------------------------------------------------------------------
+*/
+
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes hero-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.hero-progress-fill {
+  animation: hero-progress 7s linear forwards;
+}
+
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate > * {
+  animation: hero-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-animate > *:nth-child(2) { animation-delay: 70ms; }
+.hero-animate > *:nth-child(3) { animation-delay: 140ms; }
+.hero-animate > *:nth-child(4) { animation-delay: 210ms; }
+.hero-animate > *:nth-child(5) { animation-delay: 280ms; }
+.hero-animate > *:nth-child(6) { animation-delay: 350ms; }
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+.ken-burns {
+  animation: ken-burns 9s ease-out forwards;
+}
+
+.rank-number {
+  font-weight: 800;
+  font-size: clamp(4.5rem, 9vw, 8rem);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 2px rgb(255 255 255 / 0.3);
+  user-select: none;
 }

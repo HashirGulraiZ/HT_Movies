@@ -1,5 +1,6 @@
 import { db } from "@/lib/db/mysql";
 import type { Movie } from "@/types/movie";
+import { ensureDetailColumns } from "@/lib/db/ensureColumns";
 
 export type MovieFilters = {
 	search?: string;
@@ -8,6 +9,14 @@ export type MovieFilters = {
 	limit: number;
 	offset: number;
 };
+
+export function normalizeMovieSlug(slug: string): string {
+	return slug.trim().replace(/^\/+/, "").replace(/^movies\//i, "");
+}
+
+function normalizeMovieRows(rows: Movie[]): Movie[] {
+	return rows.map((movie) => ({ ...movie, slug: normalizeMovieSlug(movie.slug) }));
+}
 
 export async function getPublishedMovies(filters: MovieFilters): Promise<Movie[]> {
 	const conditions = ["status = 'published'"];
@@ -37,17 +46,19 @@ export async function getPublishedMovies(filters: MovieFilters): Promise<Movie[]
 		values,
 	);
 
-	return rows as Movie[];
+	return normalizeMovieRows(rows as Movie[]);
 }
 
 export async function getPublishedMovieBySlug(slug: string): Promise<Movie | null> {
+	await ensureDetailColumns();
+	const normalizedSlug = normalizeMovieSlug(slug);
 	const [rows] = await db.execute(
 		`SELECT id, title, slug, description, poster_url, backdrop_url, trailer_url,
-			video_url, duration_minutes, release_year, rating, age_rating, status, featured, views
-		 FROM movies WHERE slug = ? AND status = 'published' LIMIT 1`,
-		[slug],
+			video_url, duration_minutes, release_year, rating, age_rating, director, cast_members, quality, status, featured, views, likes
+		 FROM movies WHERE slug IN (?, ?) AND status = 'published' LIMIT 1`,
+		[normalizedSlug, `movies/${normalizedSlug}`],
 	);
-	return ((rows as Movie[])[0] ?? null);
+	return normalizeMovieRows(rows as Movie[])[0] ?? null;
 }
 
 export async function getPublishedMovieById(id: number): Promise<Movie | null> {
@@ -57,7 +68,7 @@ export async function getPublishedMovieById(id: number): Promise<Movie | null> {
 		 FROM movies WHERE id = ? AND status = 'published' LIMIT 1`,
 		[id],
 	);
-	return ((rows as Movie[])[0] ?? null);
+	return normalizeMovieRows(rows as Movie[])[0] ?? null;
 }
 
 export async function getAdminMovies(): Promise<Movie[]> {
@@ -66,20 +77,33 @@ export async function getAdminMovies(): Promise<Movie[]> {
 			video_url, duration_minutes, release_year, rating, age_rating, status, featured, views
 		 FROM movies ORDER BY created_at DESC`,
 	);
-	return rows as Movie[];
+	return normalizeMovieRows(rows as Movie[]);
 }
 
-export type MovieInput = Omit<Movie, "id" | "views" | "featured"> & { featured: boolean };
+export async function getAdminMovieById(id: number): Promise<Movie | null> {
+	await ensureDetailColumns();
+	const [rows] = await db.execute(
+		`SELECT id, title, slug, description, poster_url, backdrop_url, trailer_url,
+			video_url, duration_minutes, release_year, rating, age_rating, director, cast_members, quality, status, featured, views, likes
+		 FROM movies WHERE id = ? LIMIT 1`,
+		[id],
+	);
+	return normalizeMovieRows(rows as Movie[])[0] ?? null;
+}
+
+export type MovieInput = Omit<Movie, "id" | "views" | "featured" | "likes"> & { featured: boolean; likes?: number };
+
 
 export async function createMovie(input: MovieInput) {
+	await ensureDetailColumns();
 	const [result] = await db.execute(
 		`INSERT INTO movies
 			(title, slug, description, poster_url, backdrop_url, trailer_url, video_url,
-			 duration_minutes, release_year, rating, age_rating, status, featured)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			 duration_minutes, release_year, rating, age_rating, director, cast_members, quality, status, featured)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		[
 			input.title,
-			input.slug,
+			normalizeMovieSlug(input.slug),
 			input.description,
 			input.poster_url,
 			input.backdrop_url,
@@ -89,6 +113,9 @@ export async function createMovie(input: MovieInput) {
 			input.release_year,
 			input.rating,
 			input.age_rating,
+			input.director ?? null,
+			input.cast_members ?? null,
+			input.quality ?? null,
 			input.status,
 			input.featured ? 1 : 0,
 		],
@@ -96,13 +123,21 @@ export async function createMovie(input: MovieInput) {
 	return (result as { insertId: number }).insertId;
 }
 
-export async function updateMovie(id: number, input: Partial<MovieInput>) {
+export async function updateMovie(id: number, input: Partial<MovieInput> & { likes?: number }) {
+	await ensureDetailColumns();
 	const allowed = [
 		"title", "slug", "description", "poster_url", "backdrop_url", "trailer_url",
-		"video_url", "duration_minutes", "release_year", "rating", "age_rating", "status", "featured",
+		"video_url", "duration_minutes", "release_year", "rating", "age_rating",
+		"director", "cast_members", "quality", "status", "featured", "likes",
 	] as const;
-	const entries = allowed.filter((key) => input[key] !== undefined).map((key) => [key, input[key]] as const);
+	const entries = allowed
+		.filter((key) => input[key] !== undefined)
+		.map((key) => {
+			const value = key === "slug" && typeof input[key] === "string" ? normalizeMovieSlug(input[key]) : input[key];
+			return [key, typeof value === "boolean" ? (value ? 1 : 0) : value] as const;
+		});
 	if (!entries.length) return;
+
 	const [values, columns] = [entries.map(([, value]) => value), entries.map(([key]) => `\`${key}\` = ?`)];
 	await db.query(`UPDATE movies SET ${columns.join(", ")} WHERE id = ?`, [...values, id] as Array<string | number | null | boolean>);
 }
